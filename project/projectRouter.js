@@ -142,6 +142,22 @@ router.put('/:id', validateProjectId, validateProject, async(req, res) => {
     }
 })
 
+router.put('/:id/action/:actionId', validateProjectId, validateActionId, validateAction, async(req, res) => {
+    const updatedAction = {
+        description: req.body.description,
+        notes: req.body.notes,
+        completed: req.body.completed
+    }
+    try {
+        const updatedActionResponse = await actionModel.update(req.action.id, updatedAction)
+        return res.status(200).json(updatedActionResponse)
+    } catch (error) {
+        return res.status(500).json({
+            error: 'There was an error while saving the user to the database and you are',
+          });
+    }
+})
+
 
 
 
@@ -175,7 +191,6 @@ function validateAction(req, res, next) {
         });
       }
       return next()
-
 };
 
 async function validateProjectId(req, res, next) {
@@ -187,7 +202,6 @@ async function validateProjectId(req, res, next) {
     }
     try {
         const project = await projectModel.get(id);
-        console.log(project)
         if (!project) {
             res.status(404).json({
                 errorMessage: "The project with the specified ID does not exist."
@@ -201,4 +215,24 @@ async function validateProjectId(req, res, next) {
     }
     return next();
 };
+
+async function validateActionId(req, res, next) {
+    const actionId = Number(req.params.actionId);
+    if (Number.isNaN(actionId) || actionId % 1 !== 0 || actionId < 0) {
+      return res.status(400).send({
+        message: 'invalid action id provided',
+      });
+    }
+    try {
+      const data = await actionModel.get(actionId);
+      if (data) {
+        req.action = data;
+      }
+    } catch (error) {
+      return res.status(404).send({
+        message: 'action id provided does not exist',
+      });
+    }
+    return next();
+   }
 module.exports = router;
