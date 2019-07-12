@@ -43,7 +43,6 @@ router.get('/:id', (req, res) => {
 });
 
 router.delete('/:id', validateProjectId, async (req, res) => {
-    //const id = parseInt(req.params.id, 10);
     try {
         const user = await projectModel.remove(id);
         if (user) {
@@ -61,10 +60,6 @@ router.delete('/:id', validateProjectId, async (req, res) => {
         })
     }
 });
-
-// router.put('/:id', validateProjectId, async(req, res) => {
-
-// })
 
 router.post('/', validateProject, async (req, res) => {
         let { name, description} = req.body
@@ -86,7 +81,27 @@ router.post('/', validateProject, async (req, res) => {
 
 
 
-
+router.put('/:id', validateProjectId, validateProject, async(req, res) => {
+    const updatedProject = {
+        name: req.body.name,
+        description: req.body.description,
+        completed: req.body.completed
+    }
+    try {
+        const updateResponse = await projectModel.update(req.project.id, updatedProject);
+        console.log(updateResponse)
+        if (updateResponse === 1) {
+            updatedProjectData = await projectModel.get(req.project.id);
+            return res.status(200).json(updatedProjectData);
+        }
+        throw new Error;
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            error: 'There was an error while saving the user to the database',
+          });
+    }
+})
 
 
 
