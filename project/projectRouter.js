@@ -42,6 +42,27 @@ router.get('/:id', (req, res) => {
         
 });
 
+router.delete('/:id', validateProjectId, async (req, res) => {
+    //const id = parseInt(req.params.id, 10);
+    try {
+        const user = await projectModel.remove(id);
+        if (user) {
+            return res.status(200).json({
+                message: 'project successfully deleted'
+            });
+        } else {
+            return res.status(404).json({
+                message: "The project with the specified ID does not exist."
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            error: "The project could not be removed"
+        })
+    }
+});
+
+
 
 
 
