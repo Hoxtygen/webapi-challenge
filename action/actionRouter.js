@@ -35,14 +35,14 @@ async function validateActionId(req, res, next) {
     try {
         const action = await actionModel.get(id);
         if (!id) {
-            res.status(404).json({
+           return res.status(404).json({
                 errorMessage: "The action with the specified ID does not exist."
             })
         }
         req.action = action;
     } catch (error) {
         return res.status(500).json({
-            error
+            error: 'yyyyyyy'
         })
     }
     return next();

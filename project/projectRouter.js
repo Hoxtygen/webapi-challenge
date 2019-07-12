@@ -1,5 +1,6 @@
 const express = require('express');
 const projectModel = require('../data/helpers/projectModel');
+const actionModel = require('../data/helpers/actionModel')
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -124,6 +125,26 @@ router.get('/:id/action', validateProjectId, async(req, res) => {
     }
 })
 
+router.post('/:id/action', validateProjectId, validateAction, async(req, res) => {
+    const { project_id, description, notes} = req.body
+    const newAction = { 
+        project_id: req.project.id,
+        description,
+        notes,
+    }
+    //console.log(newAction)
+    try {
+        const newActionId = await actionModel.insert(newAction)
+        console.log(newActionId)
+        const newActionData = await projectModel.get(newActionId);
+        return res.status(201).json(newActionId)
+    } catch (error) {
+        return res.status(500).json({
+            error: 'There was an error while saving the post to the database',
+          });
+    }
+})
+
 
 
 
@@ -137,6 +158,23 @@ function validateProject(req, res, next) {
     if (!req.body.name || !req.body.description) {
         return res.status(400).send({
           message: 'missing required name or description field',
+        });
+      }
+      return next()
+
+};
+
+
+
+function validateAction(req, res, next) {
+    if (!Object.keys(req.body).length) {
+        return res.status(400).json({
+            message: 'missing user data'
+        })
+    }
+    if (!req.body.notes || !req.body.description) {
+        return res.status(400).send({
+          message: 'missing required notes or description field',
         });
       }
       return next()
