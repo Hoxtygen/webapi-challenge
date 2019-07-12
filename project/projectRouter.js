@@ -82,27 +82,7 @@ router.post('/', validateProject, async (req, res) => {
 
 
 
-router.put('/:id', validateProjectId, validateProject, async(req, res) => {
-    const updatedProject = {
-        name: req.body.name,
-        description: req.body.description,
-        completed: req.body.completed
-    }
-    try {
-        const updateResponse = await projectModel.update(req.project.id, updatedProject);
-        console.log(updateResponse)
-        if (updateResponse === 1) {
-            updatedProjectData = await projectModel.get(req.project.id);
-            return res.status(200).json(updatedProjectData);
-        }
-        throw new Error;
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            error: 'There was an error while saving the user to the database',
-          });
-    }
-})
+
 
 
 router.get('/:id/action', validateProjectId, async(req, res) => {
@@ -140,6 +120,24 @@ router.post('/:id/action', validateProjectId, validateAction, async(req, res) =>
     } catch (error) {
         return res.status(500).json({
             error: 'There was an error while saving the post to the database',
+          });
+    }
+})
+
+router.put('/:id', validateProjectId, validateProject, async(req, res) => {
+    const updatedProject = {
+        name: req.body.name,
+        description: req.body.description,
+        completed: req.body.completed
+    }
+    try {
+        const updateResponse = await projectModel.update(req.project.id, updatedProject);
+        console.log(updateResponse)
+            return res.status(200).json(updateResponse);
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            error: 'There was an error while saving the user to the database',
           });
     }
 })
@@ -189,7 +187,8 @@ async function validateProjectId(req, res, next) {
     }
     try {
         const project = await projectModel.get(id);
-        if (!id) {
+        console.log(project)
+        if (!project) {
             res.status(404).json({
                 errorMessage: "The project with the specified ID does not exist."
             })
