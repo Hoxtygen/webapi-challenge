@@ -12,3 +12,25 @@ I need this code, just don't know where, perhaps should make some middleware, do
 
 Go code!
 */
+const express = require('express');
+const cors = require('cors');
+const server = express();
+const projectRouter = require('./project/projectRouter');
+const port = process.env.PORT || 4003;
+
+
+server.use(express.json())
+server.use(express.urlencoded({extended: false}))
+server.use(cors());
+
+server.use('/api/projects', projectRouter);
+
+server.get('/', (req, res) => {
+    res.send('Hello, welcome to Lambda school.')
+})
+
+
+server.listen(port, () => {
+    console.log(`listening on port ${port}`);
+
+});
