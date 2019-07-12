@@ -13,6 +13,37 @@ router.get('/', async (req, res) => {
     }
 });
 
+router.get('/:id', (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    if (Number.isNaN(id) || id % 1 !== 0 || id < 0) {
+        return res.status(400).json({
+            errorMessage: "Invalid user id supplied"
+        });
+    }
+    projectModel.get(id)
+        .then(project => {
+            if (!project) {
+                return res.status(404).json({
+                    status: 404,
+                    message: "The project with the specified ID does not exist."
+                })
+            }
+            return res.status(200).json({
+                status: 200,
+                project
+            })
+        })
+        .catch(err => {
+            return res.status(500).json({
+                status: 500,
+                error: "The project information could not be retrieved."
+            })
+        })
+        
+});
+
+
+
 
 
 
