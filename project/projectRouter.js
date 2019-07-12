@@ -104,6 +104,25 @@ router.put('/:id', validateProjectId, validateProject, async(req, res) => {
 })
 
 
+router.get('/:id/action', validateProjectId, async(req, res) => {
+    try {
+        const getProject = await projectModel.getProjectActions(req.project.id)
+        console.log(getProject)
+        if (getProject) {
+            console.log(getProject.length)
+            return res.status(200).json({
+                data: getProject
+            })
+        }
+        return res.status(200).json({
+            message: 'The project has no post to display'
+        })
+    } catch (error) {
+        return res.status(500).json({
+            error: 'There was an error while getting the actions from the database',
+          });
+    }
+})
 
 
 
