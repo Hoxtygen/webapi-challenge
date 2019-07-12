@@ -18,7 +18,25 @@ router.get('/:id', validateActionId, async(req, res) => {
     res.status(200).send(req.action);
 })
 
-
+router.delete('/:id', validateActionId, async(req, res) => {
+    try {
+        const action = await actionModel.remove(req.action.id);
+        console.log(action)
+        if (action) {
+            return res.status(200).json({
+                message: 'action successfully deleted'
+            });
+        } else {
+            return res.status(404).json({
+                message: "The action with the specified ID does not exist."
+            })
+        }
+    } catch (error) {
+        res.status(500).json({
+            error: "The action could not be removed"
+        })
+    }
+})
 
 
 
@@ -42,7 +60,7 @@ async function validateActionId(req, res, next) {
         req.action = action;
     } catch (error) {
         return res.status(500).json({
-            error: 'yyyyyyy'
+            error
         })
     }
     return next();

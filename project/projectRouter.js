@@ -45,8 +45,8 @@ router.get('/:id', (req, res) => {
 
 router.delete('/:id', validateProjectId, async (req, res) => {
     try {
-        const user = await projectModel.remove(id);
-        if (user) {
+        const project = await projectModel.remove(id);
+        if (project) {
             return res.status(200).json({
                 message: 'project successfully deleted'
             });
@@ -132,7 +132,6 @@ router.post('/:id/action', validateProjectId, validateAction, async(req, res) =>
         description,
         notes,
     }
-    //console.log(newAction)
     try {
         const newActionId = await actionModel.insert(newAction)
         console.log(newActionId)
