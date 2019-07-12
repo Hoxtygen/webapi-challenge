@@ -62,7 +62,27 @@ router.delete('/:id', validateProjectId, async (req, res) => {
     }
 });
 
+// router.put('/:id', validateProjectId, async(req, res) => {
 
+// })
+
+router.post('/', validateProject, async (req, res) => {
+        let { name, description} = req.body
+        const newProject = {
+           name,
+           description,
+        }
+        try {
+            const  newProjectId = await projectModel.insert(newProject);
+            const newProjectData = await projectModel.get(newProjectId.id);
+            return res.status(201).json(newProjectData);
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({
+                error: 'There was an error while saving the user to the database',
+            })
+        }
+    });
 
 
 
@@ -75,14 +95,14 @@ router.delete('/:id', validateProjectId, async (req, res) => {
 
 
 function validateProject(req, res, next) {
-    // if (!req.body.length) {
-    //     return res.status(400).json({
-    //         message: 'missing user data'
-    //     })
-    // }
-    if (!req.body.name || !req.body.description || !req.body.completed) {
+    if (!Object.keys(req.body).length) {
+        return res.status(400).json({
+            message: 'missing user data'
+        })
+    }
+    if (!req.body.name || !req.body.description) {
         return res.status(400).send({
-          message: 'missing required name field',
+          message: 'missing required name or description field',
         });
       }
       return next()
